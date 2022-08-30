@@ -40,6 +40,11 @@ class Books
     #[ORM\Column(length: 255)]
     private ?string $author = null;
 
+    public function __construct()
+    {
+        $this->dateOfRelease = new \DateTimeImmutable();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,9 +67,9 @@ class Books
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setTextDescription(?string $description): self
     {
-        $this->description = $description;
+        $this->description = nl2br($description);
 
         return $this;
     }
@@ -86,12 +91,6 @@ class Books
         return $this->dateOfRelease;
     }
 
-    public function setDateOfRelease(\DateTimeInterface $dateOfRelease): self
-    {
-        $this->dateOfRelease = $dateOfRelease;
-
-        return $this;
-    }
 
     public function getUpdateDateOfRelease(): ?\DateTimeInterface
     {
