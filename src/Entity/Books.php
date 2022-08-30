@@ -7,6 +7,7 @@ use App\Repository\BooksRepository;
 use Carbon\Carbon;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BooksRepository::class)]
 #[ApiResource(
@@ -14,7 +15,9 @@ use Doctrine\ORM\Mapping as ORM;
         "get"=>["path"=>"/getMyBook/{id}"],
         "put"
     ],
-    shortName: "book"
+    shortName: "book",
+    denormalizationContext: ["groups" => ['write']],
+    normalizationContext: ["groups" => ['read']]
 )]
 class Books
 {
@@ -24,12 +27,15 @@ class Books
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["read", "write"])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(["read"])]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(["read", "write"])]
     private ?int $numberOfPages = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -68,6 +74,14 @@ class Books
         return $this->description;
     }
 
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    #[Groups(["write"])]
     public function setTextDescription(?string $description): self
     {
         $this->description = nl2br($description);
@@ -92,6 +106,7 @@ class Books
         return $this->dateOfRelease;
     }
 
+    #[Groups(["read"])]
     public function getDateOfReleaseAgo(): string
     {
         return Carbon::instance($this->getDateOfRelease())->diffForHumans();
