@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\BooksRepository;
+use Carbon\Carbon;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -89,6 +90,11 @@ class Books
     public function getDateOfRelease(): ?\DateTimeInterface
     {
         return $this->dateOfRelease;
+    }
+
+    public function getDateOfReleaseAgo(): string
+    {
+        return Carbon::instance($this->getDateOfRelease())->diffForHumans();
     }
 
 
