@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: BooksRepository::class)]
 #[ApiResource(
@@ -47,7 +48,7 @@ class Books
     #[ORM\Column(length: 255)]
     private ?string $author = null;
 
-    public function __construct()
+    public function __construct(string $title)
     {
         $this->dateOfRelease = new \DateTimeImmutable();
     }
@@ -82,6 +83,7 @@ class Books
     }
 
     #[Groups(["write"])]
+    #[SerializedName("description")]
     public function setTextDescription(?string $description): self
     {
         $this->description = nl2br($description);
