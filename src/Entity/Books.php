@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\BooksRepository;
 use Carbon\Carbon;
 use Doctrine\DBAL\Types\Types;
@@ -11,6 +14,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: BooksRepository::class)]
+#[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
+#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
 #[ApiResource(
     itemOperations: [
         "get"=>["path"=>"/getMyBook/{id}"],
@@ -46,10 +51,16 @@ class Books
     private ?\DateTimeInterface $updateDateOfRelease = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["read", "write"])]
     private ?string $author = null;
 
-    public function __construct(string $title)
+    #[ORM\Column]
+    #[Groups(["read", "write"])]
+    private ?bool $isPublished = false;
+
+    public function __construct(string $title = null)
     {
+        $this->title = $title;
         $this->dateOfRelease = new \DateTimeImmutable();
     }
 
@@ -135,6 +146,18 @@ class Books
     public function setAuthor(string $author): self
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    public function isIsPublished(): ?bool
+    {
+        return $this->isPublished;
+    }
+
+    public function setIsPublished(bool $isPublished): self
+    {
+        $this->isPublished = $isPublished;
 
         return $this;
     }
