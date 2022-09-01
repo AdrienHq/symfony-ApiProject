@@ -26,6 +26,9 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
         "put"
     ],
     shortName: "book",
+    attributes: [
+        "pagination_items_per_page" => 10
+    ],
     denormalizationContext: ["groups" => ['write']],
     normalizationContext: ["groups" => ['read']]
 )]
