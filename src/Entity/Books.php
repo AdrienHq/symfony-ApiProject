@@ -19,6 +19,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 #[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'description' => 'partial'])]
 #[ApiFilter(RangeFilter::class, properties: ['price'])]
+#[ApiFilter(PropertyFilter::class)]
 #[ApiResource(
     itemOperations: [
         "get"=>["path"=>"/getMyBook/{id}"],
