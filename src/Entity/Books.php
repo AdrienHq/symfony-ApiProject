@@ -5,7 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use App\Repository\BooksRepository;
 use Carbon\Carbon;
 use Doctrine\DBAL\Types\Types;
@@ -15,7 +17,8 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: BooksRepository::class)]
 #[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
-#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'description' => 'partial'])]
+#[ApiFilter(RangeFilter::class, properties: ['price'])]
 #[ApiResource(
     itemOperations: [
         "get"=>["path"=>"/getMyBook/{id}"],
@@ -58,9 +61,12 @@ class Books
     #[Groups(["read", "write"])]
     private ?bool $isPublished = false;
 
-    public function __construct(string $title = null)
+    #[ORM\Column(nullable: true)]
+    #[Groups(["read", "write"])]
+    private ?int $price = null;
+
+    public function __construct()
     {
-        $this->title = $title;
         $this->dateOfRelease = new \DateTimeImmutable();
     }
 
@@ -79,6 +85,16 @@ class Books
         $this->title = $title;
 
         return $this;
+    }
+
+    #[Groups(["read", "write"])]
+    public function getShortDescription(): ?string
+    {
+        if(strlen($this->description) <= 50){
+            return $this->description;
+        } else {
+            return substr($this->description, 0,50 ).'...';
+        }
     }
 
     public function getDescription(): ?string
@@ -158,6 +174,18 @@ class Books
     public function setIsPublished(bool $isPublished): self
     {
         $this->isPublished = $isPublished;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?int $price): self
+    {
+        $this->price = $price;
 
         return $this;
     }
