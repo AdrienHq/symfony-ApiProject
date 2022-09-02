@@ -14,6 +14,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BooksRepository::class)]
 #[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
@@ -42,6 +43,13 @@ class Books
 
     #[ORM\Column(length: 255)]
     #[Groups(["read", "write"])]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: 'The title contains not enough character. Minimum 2',
+        maxMessage: 'The title contains to much character',
+    )]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -60,6 +68,7 @@ class Books
 
     #[ORM\Column(length: 255)]
     #[Groups(["read", "write"])]
+    #[Assert\NotBlank]
     private ?string $author = null;
 
     #[ORM\Column]
@@ -68,6 +77,7 @@ class Books
 
     #[ORM\Column(nullable: true)]
     #[Groups(["read", "write"])]
+    #[Assert\NotBlank]
     private ?int $price = null;
 
     public function __construct()
