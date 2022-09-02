@@ -30,6 +30,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
         "pagination_items_per_page" => 10
     ],
     denormalizationContext: ["groups" => ['write']],
+    formats: ['json', 'xml', 'jsonld', 'csv' => ['text/csv']],
     normalizationContext: ["groups" => ['read']]
 )]
 class Books

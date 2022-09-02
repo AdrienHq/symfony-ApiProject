@@ -5,6 +5,9 @@ api_platform:
         json: ['application/merge-patch+json']
     swagger:
         versions: [3]
+    api_platform:
+        defaults:
+            pagination_enabled: true
     formats:
         jsonld: [ 'application/ld+json' ]
         jsonhal: [ 'application/hal+json' ]
