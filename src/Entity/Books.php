@@ -35,7 +35,6 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 )]
 class Books
 {
-    //yolo
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
