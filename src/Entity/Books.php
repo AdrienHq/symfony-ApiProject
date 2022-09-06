@@ -23,16 +23,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(PropertyFilter::class)]
 #[ApiResource(
     itemOperations: [
-        "get"=>["path"=>"/getMyBook/{id}"],
+        "get"=>[
+            "path"=>"/getMyBook/{id}",
+            'normalization_context' => ['groups' => ['books:read', 'books:item:get']]
+        ],
         "put"
     ],
     shortName: "Book",
     attributes: [
         "pagination_items_per_page" => 10
     ],
-    denormalizationContext: ["groups" => ['write']],
+    denormalizationContext: ["groups" => ['books:write']],
     formats: ['json', 'xml', 'jsonld', 'csv' => ['text/csv']],
-    normalizationContext: ["groups" => ['read']]
+    normalizationContext: ["groups" => ['books:read']]
 )]
 class Books
 {
@@ -42,7 +45,7 @@ class Books
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["read", "write"])]
+    #[Groups(["books:read", "books:write", "user:read"])]
     #[Assert\NotBlank]
     #[Assert\Length(
         min: 2,
@@ -53,11 +56,11 @@ class Books
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(["read"])]
+    #[Groups(["books:read", "user:read"])]
     private ?string $description = null;
 
     #[ORM\Column]
-    #[Groups(["read", "write"])]
+    #[Groups(["books:read", "books:write"])]
     private ?int $numberOfPages = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -67,21 +70,21 @@ class Books
     private ?\DateTimeInterface $updateDateOfRelease = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["read", "write"])]
+    #[Groups(["books:read", "books:write"])]
     #[Assert\NotBlank]
     private ?string $author = null;
 
     #[ORM\Column]
-    #[Groups(["read", "write"])]
+    #[Groups(["books:read", "books:write"])]
     private ?bool $isPublished = false;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["read", "write"])]
+    #[Groups(["books:read", "books:write"])]
     #[Assert\NotBlank]
     private ?int $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
-    #[Groups(["read", "write"])]
+    #[Groups(["books:read", "books:write"])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $owner = null;
 
@@ -107,7 +110,6 @@ class Books
         return $this;
     }
 
-    #[Groups(["read", "write"])]
     public function getShortDescription(): ?string
     {
         if(strlen($this->description) <= 50){
@@ -129,7 +131,6 @@ class Books
         return $this;
     }
 
-    #[Groups(["write"])]
     #[SerializedName("description")]
     public function setTextDescription(?string $description): self
     {
@@ -155,7 +156,6 @@ class Books
         return $this->dateOfRelease;
     }
 
-    #[Groups(["read"])]
     public function getDateOfReleaseAgo(): string
     {
         return Carbon::instance($this->getDateOfRelease())->diffForHumans();
