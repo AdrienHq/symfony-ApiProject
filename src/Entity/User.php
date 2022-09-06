@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,6 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     formats: ['json', 'xml', 'jsonld', 'csv' => ['text/csv']],
     normalizationContext: ["groups" => ['user:read']]
 )]
+#[ApiFilter(PropertyFilter::class)]
 #[UniqueEntity(fields: ["username"])]
 #[UniqueEntity(fields: ["email"])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -46,12 +50,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(["books:item:get","user:read", "user:write"])]
+    #[Groups(["user:read", "user:write", "books:item:get", "books:write"])]
     #[Assert\NotBlank]
     private ?string $username = null;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Books::class)]
     #[Groups(["user:read"])]
+    #[Assert\Valid]
+    #[ApiSubresource]
     private Collection $books;
 
     public function __construct()
