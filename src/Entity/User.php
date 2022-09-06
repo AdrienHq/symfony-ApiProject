@@ -51,6 +51,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Books::class)]
+    #[Groups(["user:read"])]
     private Collection $books;
 
     public function __construct()
