@@ -26,7 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         "get"=>["path"=>"/getMyBook/{id}"],
         "put"
     ],
-    shortName: "book",
+    shortName: "Book",
     attributes: [
         "pagination_items_per_page" => 10
     ],
