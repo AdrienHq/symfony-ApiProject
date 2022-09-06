@@ -18,7 +18,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BooksRepository::class)]
 #[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
-#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'description' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: [
+    'title' => 'partial',
+    'description' => 'partial',
+    'owner' => 'exact',
+    'owner.username' => 'partial'
+])]
 #[ApiFilter(RangeFilter::class, properties: ['price'])]
 #[ApiFilter(PropertyFilter::class)]
 #[ApiResource(
@@ -45,7 +50,7 @@ class Books
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["books:read", "books:write", "user:read"])]
+    #[Groups(["books:read", "books:write", "user:read", "user:write"])]
     #[Assert\NotBlank]
     #[Assert\Length(
         min: 2,
@@ -79,13 +84,14 @@ class Books
     private ?bool $isPublished = false;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["books:read", "books:write"])]
+    #[Groups(["books:read", "books:write", "user:read", "user:write"])]
     #[Assert\NotBlank]
     private ?int $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
     #[Groups(["books:read", "books:write"])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\Valid]
     private ?User $owner = null;
 
     public function __construct()
@@ -132,6 +138,7 @@ class Books
     }
 
     #[SerializedName("description")]
+    #[Groups(["user:write"])]
     public function setTextDescription(?string $description): self
     {
         $this->description = nl2br($description);
