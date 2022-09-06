@@ -8,9 +8,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BlogRepository::class)]
-#[ApiResource(
-    itemOperations: ["get", "put"]
-)]
 class Blog
 {
     #[ORM\Id]
