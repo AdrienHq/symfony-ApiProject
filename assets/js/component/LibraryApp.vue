@@ -4,7 +4,7 @@
       <div class="row no-gutters" style="box-shadow: 0 3px 7px 1px rgba(0,0,0,0.06);">
         <div class="col py-5">
           <h1 class="text-center">Library App</h1>
-          <h6 class="text-center">Let's find your dream books</h6>
+          <h6 class="text-center">All your favorite books in one place</h6>
         </div>
       </div>
       <div class="row no-gutters">
