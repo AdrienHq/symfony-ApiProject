@@ -50,6 +50,7 @@ export default {
   props: ['entrypoint'],
   methods: {
     onUserAuthenticated(userUri) {
+      console.log(userUri)
       axios
           .get(userUri)
           .then(response => (this.user = response.data))

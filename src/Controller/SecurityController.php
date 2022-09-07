@@ -12,12 +12,6 @@ class SecurityController extends AbstractController
     #[Route('/login', name: "app_login", methods: ["POST"])]
     public function login(IriConverterInterface $iriConverter): \Symfony\Component\HttpFoundation\JsonResponse|Response
     {
-        if($this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return $this->json([
-                'error' => 'Invalid login request'
-            ], 400);
-        }
-
         return new Response(null, 204, [
             'Location' => $iriConverter->getIriFromItem($this->getUser())
         ]);
