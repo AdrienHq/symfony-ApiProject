@@ -1,6 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    <script>
+        window.user = {{ user|raw }}
+    </script>
     <div id="library-app">
         <library-app
                 entrypoint="{{ path('api_entrypoint') }}"
