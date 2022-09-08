@@ -27,12 +27,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiFilter(RangeFilter::class, properties: ['price'])]
 #[ApiFilter(PropertyFilter::class)]
 #[ApiResource(
+    collectionOperations: [
+        'get',
+        'post' => ['access_control' => 'is_granted("ROLE_USER")'],
+    ],
     itemOperations: [
         "get"=>[
             "path"=>"/getMyBook/{id}",
             'normalization_context' => ['groups' => ['books:read', 'books:item:get']]
         ],
-        "put"
+        'put' => ['access_control' => 'is_granted("ROLE_USER")'],
+        'delete' => ['access_control' => 'is_granted("ROLE_ADMIN")'],
     ],
     shortName: "Book",
     attributes: [
