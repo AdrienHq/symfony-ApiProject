@@ -2,11 +2,10 @@
 
 namespace App\Tests\Fonctionnal;
 
-use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
-use App\Entity\User;
+use App\Test\CustomApiTestCase;
 use Hautelook\AliceBundle\PhpUnit\ReloadDatabaseTrait;
 
-class BooksResourceTest extends ApiTestCase
+class BooksResourceTest extends CustomApiTestCase
 {
     use ReloadDatabaseTrait;
 
@@ -20,22 +19,41 @@ class BooksResourceTest extends ApiTestCase
         ]);
         $this->assertResponseStatusCodeSame(401);
 
-        $user = new User();
-        $user->setEmail('bookTest@example.com');
-        $user->setUsername('bookTest');
-        $user->setPassword('$2y$13$2nJIm9u7Itd1xKuBjAcAIe5g0JeJE2nnD3IcAnyK3P1wrEb/MTJ9S');
+        $this->createUser('bookTest@example.com', "$2y$04$9L4b292zpiqse8QdHmTxceicQXoDERcUOnPcBfjMVqI2k30/mAT.e");
 
-        $em = self::getContainer()->get('doctrine')->getManager();
-        $em->persist($user);
-        $em->flush();
-
-        $client->request('POST', '/login', [
-            'headers' => ['Content-Type' => 'application/json'],
-            'json' => [
-                'email' => 'book@example.com',
-                'password' => 'book'
-            ],
-        ]);
-        $this->assertResponseStatusCodeSame(401);
+        $this->login($client, 'bookTest@example.com', 'book');
     }
+
+//    public function testCreateCheeseListing()
+//    {
+//        $client = self::createClient();
+//        $client->request('POST', '/api/books', [
+//            'json' => [],
+//        ]);
+//        $this->assertResponseStatusCodeSame(401);
+//
+//        $authenticatedUser = $this->createUserAndLogIn($client, 'cheeseplease@example.com', 'foo');
+//        $otherUser = $this->createUser('otheruser@example.com', 'foo');
+//
+//        $cheesyData = [
+//            'title' => 'Mystery cheese... kinda green',
+//            'description' => 'What mysteries does it hold?',
+//            'price' => 5000
+//        ];
+//
+//        $client->request('POST', '/api/cheeses', [
+//            'json' => $cheesyData,
+//        ]);
+//        $this->assertResponseStatusCodeSame(201);
+//
+//        $client->request('POST', '/api/cheeses', [
+//            'json' => $cheesyData + ['owner' => '/api/users/'.$otherUser->getId()],
+//        ]);
+//        $this->assertResponseStatusCodeSame(400, 'not passing the correct owner');
+//
+//        $client->request('POST', '/api/cheeses', [
+//            'json' => $cheesyData + ['owner' => '/api/users/'.$authenticatedUser->getId()],
+//        ]);
+//        $this->assertResponseStatusCodeSame(201);
+//    }
 }
