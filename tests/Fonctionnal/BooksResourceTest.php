@@ -2,6 +2,7 @@
 
 namespace App\Tests\Fonctionnal;
 
+use App\Entity\Books;
 use App\Test\CustomApiTestCase;
 use Hautelook\AliceBundle\PhpUnit\ReloadDatabaseTrait;
 
@@ -24,36 +25,33 @@ class BooksResourceTest extends CustomApiTestCase
         $this->login($client, 'bookTest@example.com', 'book');
     }
 
-//    public function testCreateCheeseListing()
-//    {
-//        $client = self::createClient();
-//        $client->request('POST', '/api/books', [
-//            'json' => [],
-//        ]);
-//        $this->assertResponseStatusCodeSame(401);
-//
-//        $authenticatedUser = $this->createUserAndLogIn($client, 'cheeseplease@example.com', 'foo');
-//        $otherUser = $this->createUser('otheruser@example.com', 'foo');
-//
-//        $cheesyData = [
-//            'title' => 'Mystery cheese... kinda green',
-//            'description' => 'What mysteries does it hold?',
-//            'price' => 5000
-//        ];
-//
-//        $client->request('POST', '/api/cheeses', [
-//            'json' => $cheesyData,
-//        ]);
-//        $this->assertResponseStatusCodeSame(201);
-//
-//        $client->request('POST', '/api/cheeses', [
-//            'json' => $cheesyData + ['owner' => '/api/users/'.$otherUser->getId()],
-//        ]);
-//        $this->assertResponseStatusCodeSame(400, 'not passing the correct owner');
-//
-//        $client->request('POST', '/api/cheeses', [
-//            'json' => $cheesyData + ['owner' => '/api/users/'.$authenticatedUser->getId()],
-//        ]);
-//        $this->assertResponseStatusCodeSame(201);
-//    }
+    public function testUpdateBooks()
+    {
+        $client = self::createClient();
+        $user1 = $this->createUser('user1@example.com', 'foo');
+        $user2 = $this->createUser('user2@example.com', 'foo');
+
+        $testBook = new Books('My testing book');
+        $testBook->setOwner($user1);
+        $testBook->setPrice(1000);
+        $testBook->setDescription('mmmm');
+        $testBook->setIsPublished(true);
+
+        $em = $this->getEntityManager();
+        $em->persist($testBook);
+        $em->flush();
+
+        $this->logIn($client, 'user2@example.com', 'foo');
+        $client->request('PUT', '/api/books/'.$testBook->getId(), [
+            // try to trick security by reassigning to this user
+            'json' => ['title' => 'updated', 'owner' => '/api/users/'.$user2->getId()]
+        ]);
+        $this->assertResponseStatusCodeSame(403, 'only author can updated');
+
+        $this->logIn($client, 'user1@example.com', 'foo');
+        $client->request('PUT', '/api/books/'.$testBook->getId(), [
+            'json' => ['title' => 'updated']
+        ]);
+        $this->assertResponseStatusCodeSame(200);
+    }
 }
