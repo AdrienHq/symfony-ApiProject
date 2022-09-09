@@ -33,10 +33,9 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     itemOperations: [
         "get"=>[
-            "path"=>"/getMyBook/{id}",
             'normalization_context' => ['groups' => ['books:read', 'books:item:get']]
         ],
-        'put' => ['access_control' => 'is_granted("ROLE_USER")'],
+        'put' => ['access_control' => 'is_granted("ROLE_USER") and object.getOwner() == user'],
         'delete' => ['access_control' => 'is_granted("ROLE_ADMIN")'],
     ],
     shortName: "Book",
