@@ -29,14 +29,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     collectionOperations: [
         'get',
-        'post' => ['access_control' => 'is_granted("ROLE_USER")'],
+        'post' => ['security' => 'is_granted("ROLE_USER")'],
     ],
     itemOperations: [
         "get"=>[
             'normalization_context' => ['groups' => ['books:read', 'books:item:get']]
         ],
-        'put' => ['access_control' => 'is_granted("ROLE_USER") and object.getOwner() == user'],
-        'delete' => ['access_control' => 'is_granted("ROLE_ADMIN")'],
+        'put' => ['security' => 'is_granted("ROLE_USER") and object.getOwner() == user'],
+        'delete' => ['security' => 'is_granted("ROLE_ADMIN")'],
     ],
     shortName: "Book",
     attributes: [
