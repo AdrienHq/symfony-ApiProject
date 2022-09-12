@@ -35,7 +35,10 @@ use Symfony\Component\Validator\Constraints as Assert;
         "get"=>[
             'normalization_context' => ['groups' => ['books:read', 'books:item:get']]
         ],
-        'put' => ['security' => 'is_granted("ROLE_USER") and object.getOwner() == user'],
+        'put' => [
+            "security" => "is_granted('BOOKS_EDIT', object)",
+            "security_message" => "Only the creator can edit a book.",
+        ],
         'delete' => ['security' => 'is_granted("ROLE_ADMIN")'],
     ],
     shortName: "Book",
