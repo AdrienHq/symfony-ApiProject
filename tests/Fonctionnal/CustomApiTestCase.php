@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Test;
+namespace App\Tests\Fonctionnal;
 
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Client;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class CustomApiTestCase extends ApiTestCase
 {
@@ -15,11 +16,11 @@ class CustomApiTestCase extends ApiTestCase
         $user->setEmail($email);
         $user->setUsername(substr($email, 0, strpos($email, '@')));
 
-        $encoded = self::getContainer()->get('security:hash-password')
-            ->encodePassword($user, $password);
-        $user->setPassword($encoded);
+//        /** @var UserPasswordHasherInterface $encoder */
+//        $encoder = static::getContainer()->get(UserPasswordHasherInterface::class);
+        $user->setPassword("$2y$04$9L4b292zpiqse8QdHmTxceicQXoDERcUOnPcBfjMVqI2k30/mAT.e" );
 
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
         $em->persist($user);
         $em->flush();
 
@@ -48,6 +49,6 @@ class CustomApiTestCase extends ApiTestCase
 
     protected function getEntityManager(): EntityManagerInterface
     {
-        return self::$container->get('doctrine')->getManager();
+        return  static::getContainer()->get(EntityManagerInterface::class);
     }
 }

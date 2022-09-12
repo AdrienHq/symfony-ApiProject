@@ -3,7 +3,6 @@
 namespace App\Tests\Fonctionnal;
 
 use App\Entity\Books;
-use App\Test\CustomApiTestCase;
 use Hautelook\AliceBundle\PhpUnit\ReloadDatabaseTrait;
 
 class BooksResourceTest extends CustomApiTestCase
@@ -28,11 +27,14 @@ class BooksResourceTest extends CustomApiTestCase
     public function testUpdateBooks()
     {
         $client = self::createClient();
-        $user1 = $this->createUser('user1@example.com', 'foo');
-        $user2 = $this->createUser('user2@example.com', 'foo');
+        $user1 = $this->createUser('user1@example.com', '$2y$13$1.SK23LLaCEtDD8gFcHa1uV6PFFqKcS3zKP0y2NpOIRv/pAzjJDs2');
+        $user2 = $this->createUser('user2@example.com', '$2y$13$1.SK23LLaCEtDD8gFcHa1uV6PFFqKcS3zKP0y2NpOIRv/pAzjJDs2');
 
         $testBook = new Books('My testing book');
+        $testBook->setTitle('MyTestBook');
+        $testBook->setNumberOfPages(12);
         $testBook->setOwner($user1);
+        $testBook->setAuthor('authorTest');
         $testBook->setPrice(1000);
         $testBook->setDescription('mmmm');
         $testBook->setIsPublished(true);
@@ -41,14 +43,14 @@ class BooksResourceTest extends CustomApiTestCase
         $em->persist($testBook);
         $em->flush();
 
-        $this->logIn($client, 'user2@example.com', 'foo');
+        $this->logIn($client, 'user2@example.com', "$2y$13$1.SK23LLaCEtDD8gFcHa1uV6PFFqKcS3zKP0y2NpOIRv/pAzjJDs2");
         $client->request('PUT', '/api/books/'.$testBook->getId(), [
             // try to trick security by reassigning to this user
             'json' => ['title' => 'updated', 'owner' => '/api/users/'.$user2->getId()]
         ]);
         $this->assertResponseStatusCodeSame(403, 'only author can updated');
 
-        $this->logIn($client, 'user1@example.com', 'foo');
+        $this->logIn($client, 'user1@example.com', "$2y$13$1.SK23LLaCEtDD8gFcHa1uV6PFFqKcS3zKP0y2NpOIRv/pAzjJDs2");
         $client->request('PUT', '/api/books/'.$testBook->getId(), [
             'json' => ['title' => 'updated']
         ]);
