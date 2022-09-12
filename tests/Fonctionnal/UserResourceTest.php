@@ -15,8 +15,8 @@ class UserResourceTest extends CustomApiTestCase
         $client->request('POST', 'api/users', [
             'json' => [
                 'email' => 'testadh@example.com',
-                'password' => 'testadh',
                 'username' => 'testadh',
+                'password' => 'testadh',
             ]
         ]);
         $this->assertResponseStatusCodeSame(201);
