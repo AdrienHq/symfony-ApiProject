@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Tests\Fonctionnal;
+
+use Hautelook\AliceBundle\PhpUnit\ReloadDatabaseTrait;
+
+class UserResourceTest extends CustomApiTestCase
+{
+    use ReloadDatabaseTrait;
+
+    public function testCreateUser()
+    {
+        $client = self::createClient();
+
+        $client->request('POST', 'api/users', [
+            'json' => [
+                'email' => 'testadh@example.com',
+                'password' => 'testadh',
+                'username' => 'testadh',
+            ]
+        ]);
+        $this->assertResponseStatusCodeSame(201);
+
+        $this->logIn($client,'testadh@example.com','testadh');
+    }
+
+}

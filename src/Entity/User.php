@@ -56,8 +56,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Groups(["user:write", "user:read"])]
+    #[Groups(["user:read"])]
     private ?string $password = null;
+
+    #[Groups(["user:read", "user:write"])]
+    private string $plainPassword;
 
     #[ORM\Column(length: 255, unique: true)]
     #[Groups(["user:read", "user:write", "books:item:get", "books:write"])]
@@ -65,7 +68,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Books::class)]
-    #[Groups(["user:read"])]
+    #[Groups(["user:read", "user:write"])]
     #[Assert\Valid]
     #[ApiSubresource]
     private Collection $books;
@@ -142,7 +145,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     public function getUsername(): ?string
@@ -183,6 +186,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $book->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }
