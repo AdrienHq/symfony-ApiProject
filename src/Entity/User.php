@@ -21,7 +21,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     collectionOperations: [
 //        'get' => ['security' => 'is_granted("ROLE_USER")'],
-//        'post' => ['security' => 'is_granted("IS_AUTHENTICATED_ANONYMOUSLY")'],
+//        'post' => [
+//            'security' => 'is_granted("IS_AUTHENTICATED_ANONYMOUSLY")'],
+//            'validation_groups' = ["Default", "create"]
         'get',
         'post',
     ],
@@ -51,6 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups(["user:write"])]
     private array $roles = [];
 
     /**
