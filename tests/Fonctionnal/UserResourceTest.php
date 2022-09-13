@@ -32,7 +32,8 @@ class UserResourceTest extends CustomApiTestCase
 
         $client->request('PUT', 'api/users', [
             'json' => [
-                'username' => 'newtestadh'
+                'username' => 'newtestadh',
+                'roles' => ['ROLE_ADMIN'],
             ]
         ]);
 
@@ -40,6 +41,11 @@ class UserResourceTest extends CustomApiTestCase
         $this->assertJsonContains([
             'username' => 'newtestadh',
         ]);
+
+        $em = $this->getEntityManager();
+        /** @var User $user */
+        $user = $em->getRepository(User::class)->find($user->getId());
+        $this->assertEquals(['ROLE_USER'], $user->getRoles());
     }
 
     public function testGetUser()
