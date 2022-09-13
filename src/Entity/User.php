@@ -74,12 +74,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Books::class)]
-    #[Groups(["user:read", "user:write"])]
+    #[Groups(["admin:read", "user:write"])]
     #[Assert\Valid]
     #[ApiSubresource]
     private Collection $books;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Groups(["user:read", "user:write"])]
     private ?string $phoneNumber = null;
 
     public function __construct()
