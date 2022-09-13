@@ -45,9 +45,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     attributes: [
         "pagination_items_per_page" => 10
     ],
-    denormalizationContext: ["groups" => ['books:write']],
     formats: ['json', 'xml', 'jsonld', 'csv' => ['text/csv']],
-    normalizationContext: ["groups" => ['books:read']]
 )]
 class Books
 {
