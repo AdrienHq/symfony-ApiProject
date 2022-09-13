@@ -33,7 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     itemOperations: [
         "get"=>[
-            'normalization_context' => ['groups' => ['books:read', 'books:item:get']]
+            'normalization_context' => ['groups' => ['book:read', 'book:item:get']]
         ],
         'put' => [
             "security" => "is_granted('BOOKS_EDIT', object)",
@@ -41,7 +41,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ],
         'delete' => ['security' => 'is_granted("ROLE_ADMIN")'],
     ],
-    shortName: "Book",
+    shortName: "book",
     attributes: [
         "pagination_items_per_page" => 10
     ],
@@ -55,7 +55,7 @@ class Books
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["books:read", "books:write", "user:read", "user:write"])]
+    #[Groups(["book:read", "book:write", "user:read", "user:write"])]
     #[Assert\NotBlank]
     #[Assert\Length(
         min: 2,
@@ -66,11 +66,11 @@ class Books
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(["books:read", "user:read"])]
+    #[Groups(["book:read", "user:read"])]
     private ?string $description = null;
 
     #[ORM\Column]
-    #[Groups(["books:read", "books:write"])]
+    #[Groups(["book:read", "book:write"])]
     private ?int $numberOfPages = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -80,21 +80,21 @@ class Books
     private ?\DateTimeInterface $updateDateOfRelease = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["books:read", "books:write"])]
+    #[Groups(["book:read", "book:write"])]
     #[Assert\NotBlank]
     private ?string $author = null;
 
     #[ORM\Column]
-    #[Groups(["books:read", "books:write"])]
+    #[Groups(["book:read", "book:write"])]
     private ?bool $isPublished = false;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["books:read", "books:write", "user:read", "user:write"])]
+    #[Groups(["book:read", "book:write", "user:read", "user:write"])]
     #[Assert\NotBlank]
     private ?int $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
-    #[Groups(["books:read", "books:write"])]
+    #[Groups(["book:read", "book:write"])]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\Valid]
     private ?User $owner = null;
