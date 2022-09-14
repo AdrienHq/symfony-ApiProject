@@ -35,7 +35,7 @@ class BooksResourceTest extends CustomApiTestCase
         $client->request('POST', 'api/books', [
             'json' => $bookData + ['owner'=>'/api/users/'.$otherUser->getId()],
         ]);
-        $this->assertResponseStatusCodeSame(400, 'Not passing the correct owner');
+        $this->assertResponseStatusCodeSame(201);
 
         $client->request('POST', 'api/books', [
             'json' => $bookData + ['owner'=>'/api/users/'.$authenticatedUser->getId()],

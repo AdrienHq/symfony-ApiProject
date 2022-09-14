@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: BooksRepository::class)]
+
 #[ApiFilter(BooleanFilter::class, properties: ['isPublished'])]
 #[ApiFilter(SearchFilter::class, properties: [
     'title' => 'partial',
@@ -48,6 +48,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     formats: ['json', 'xml', 'jsonld', 'csv' => ['text/csv']],
 )]
+#[ORM\Entity(repositoryClass: BooksRepository::class)]
+#[ORM\EntityListeners(["App\Doctrine\BooksSetOwnerListener"])]
 class Books
 {
     #[ORM\Id]
