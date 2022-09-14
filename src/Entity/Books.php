@@ -201,7 +201,7 @@ class Books
         return $this;
     }
 
-    public function isIsPublished(): ?bool
+    public function getIsPublished(): ?bool
     {
         return $this->isPublished;
     }

@@ -74,7 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Books::class)]
-    #[Groups(["admin:read", "user:write"])]
+    #[Groups(["user:write"])]
     #[Assert\Valid]
     #[ApiSubresource]
     private Collection $books;
@@ -176,6 +176,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getBooks(): Collection
     {
         return $this->books;
+    }
+
+    #[Groups(["user:read"])]
+    #[SerializedName('books')]
+    public function getPublishedBooks(): Collection
+    {
+        return $this->books->filter(function(Books $books){
+            return $books->getIsPublished();
+        });
     }
 
     public function addBook(Books $book): self

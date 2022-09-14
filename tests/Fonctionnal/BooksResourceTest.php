@@ -120,7 +120,7 @@ class BooksResourceTest extends CustomApiTestCase
     public function testGetBooks()
     {
         $client = self::createClient();
-        $user = $this->createUser('user@example.com', 'foo');
+        $user = $this->createUserAndLogIn($client,'user@example.com', 'foo');
 
         $testBook1 = new Books('My testing book 1');
         $testBook1->setOwner($user);
@@ -137,5 +137,9 @@ class BooksResourceTest extends CustomApiTestCase
 
         $client->request('GET', '/api/books/'.$testBook1->getId());
         $this->assertResponseStatusCodeSame(404);
+
+        $client->request('GET', 'api/users/'.$user->getId());
+        $data = $client->getResponse()->toArray();
+        $this->assertEmpty($data['books']);
     }
 }
