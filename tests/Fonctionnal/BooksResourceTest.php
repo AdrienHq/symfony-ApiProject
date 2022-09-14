@@ -75,4 +75,45 @@ class BooksResourceTest extends CustomApiTestCase
         ]);
         $this->assertResponseStatusCodeSame(200);
     }
+
+    public function testGetBooksCollection()
+    {
+        $client = self::createClient();
+        $user = $this->createUser('user@example.com', 'foo');
+
+        $testBook1 = new Books('My testing book 1');
+        $testBook1->setOwner($user);
+        $testBook1->setTitle('MyTestBook 1');
+        $testBook1->setNumberOfPages(12);
+        $testBook1->setAuthor('authorTest');
+        $testBook1->setPrice(1000);
+        $testBook1->setDescription('mmmm');
+
+        $testBook2 = new Books('My testing book 2');
+        $testBook2->setOwner($user);
+        $testBook2->setTitle('MyTestBook 2');
+        $testBook2->setNumberOfPages(12);
+        $testBook2->setAuthor('authorTest');
+        $testBook2->setPrice(1000);
+        $testBook2->setDescription('mmmm');
+        $testBook2->setIsPublished(true);
+
+        $testBook3 = new Books('My testing book 3');
+        $testBook3->setOwner($user);
+        $testBook3->setTitle('MyTestBook 3');
+        $testBook3->setNumberOfPages(12);
+        $testBook3->setAuthor('authorTest');
+        $testBook3->setPrice(1000);
+        $testBook3->setDescription('mmmm');
+        $testBook3->setIsPublished(true);
+
+        $em = $this->getEntityManager();
+        $em->persist($testBook1);
+        $em->persist($testBook2);
+        $em->persist($testBook3);
+        $em->flush();
+
+        $client->request('GET', '/api/books/');
+        $this->assertJsonContains(['hydra:totalItems' => 2]);
+    }
 }
