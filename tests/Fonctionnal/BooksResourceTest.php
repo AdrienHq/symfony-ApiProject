@@ -113,7 +113,29 @@ class BooksResourceTest extends CustomApiTestCase
         $em->persist($testBook3);
         $em->flush();
 
-        $client->request('GET', '/api/books/');
+        $client->request('GET', '/api/books');
         $this->assertJsonContains(['hydra:totalItems' => 2]);
+    }
+
+    public function testGetBooks()
+    {
+        $client = self::createClient();
+        $user = $this->createUser('user@example.com', 'foo');
+
+        $testBook1 = new Books('My testing book 1');
+        $testBook1->setOwner($user);
+        $testBook1->setTitle('MyTestBook 1');
+        $testBook1->setNumberOfPages(12);
+        $testBook1->setAuthor('authorTest');
+        $testBook1->setPrice(1000);
+        $testBook1->setDescription('mmmm');
+        $testBook1->setIsPublished(false);
+
+        $em = $this->getEntityManager();
+        $em->persist($testBook1);
+        $em->flush();
+
+        $client->request('GET', '/api/books/'.$testBook1->getId());
+        $this->assertResponseStatusCodeSame(404);
     }
 }
