@@ -22,7 +22,7 @@ class UserResourceTest extends CustomApiTestCase
         ]);
         $this->assertResponseStatusCodeSame(201);
 
-        $this->logIn($client,'testadh@example.com','testadh');
+        $this->logIn($client, 'testadh@example.com', 'testadh');
     }
 
     public function testUpdateUser()
@@ -51,13 +51,14 @@ class UserResourceTest extends CustomApiTestCase
     public function testGetUser()
     {
         $client = self::createClient();
-        $user = $this->createUserAndLogIn($client, 'testadh@example.com', 'foo');
+        $user = $this->createUser('testadh@example.com', 'foo');
+        $this->createUserAndLogIn($client, 'testadhother@example.com', 'foo' );
 
         $user->setPhoneNumber('0448123456');
         $em = $this->getEntityManager();
         $em->flush();
 
-        $client->request('GET', 'api/users'.$user->getId());
+        $client->request('GET', 'api/users' . $user->getId());
         $this->assertJsonContains([
             'username' => 'testadh',
         ]);
@@ -70,7 +71,7 @@ class UserResourceTest extends CustomApiTestCase
         $em->flush();
         $this->logIn($client, 'testadh@example.com', 'foo');
 
-        $client->request('GET', 'api/users'.$user->getId());
+        $client->request('GET', 'api/users' . $user->getId());
         $this->assertJsonContains([
             'phoneNumber' => '0448123456',
         ]);

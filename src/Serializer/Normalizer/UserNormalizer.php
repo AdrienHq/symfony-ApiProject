@@ -3,22 +3,29 @@
 namespace App\Serializer\Normalizer;
 
 use App\Entity\User;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class UserNormalizer implements NormalizerInterface, CacheableSupportsMethodInterface, NormalizerAwareInterface
 {
     use NormalizerAwareTrait;
 
     private const ALREADY_CALLED = 'USER_NORMALIZER_ALREADY_CALLED';
+    private Security $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
 
     public function normalize($object, string $format = null, array $context = []): array
     {
-        /** @var User $object */
-        if ($this->userIsOwner($object)) {
+        $isOwner = $this->userIsOwner($object);
+
+        if ($isOwner) {
             $context['groups'][] = 'owner:read';
         }
 
@@ -26,7 +33,7 @@ class UserNormalizer implements NormalizerInterface, CacheableSupportsMethodInte
 
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        // TODO: add, edit, or delete some data
+        $data['itsMe'] = $isOwner;
 
         return $data;
     }
@@ -47,12 +54,13 @@ class UserNormalizer implements NormalizerInterface, CacheableSupportsMethodInte
 
     private function userIsOwner(User $user): bool
     {
-        //todo
-        return rand(0, 10) > 5;
-    }
+        /** @var User|null $authenticatedUser */
+        $authenticatedUser = $this->security->getUser();
 
-    public function setNormalizer(NormalizerInterface $normalizer)
-    {
-        // TODO: Implement setNormalizer() method.
+        if(!$authenticatedUser){
+            return false;
+        }
+
+        return $authenticatedUser->getEmail() === $user->getEmail();
     }
 }
