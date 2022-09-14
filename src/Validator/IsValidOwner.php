@@ -16,4 +16,6 @@ class IsValidOwner extends Constraint
      * Then, use these in your validator class.
      */
     public $message = 'Cannot set owner to a different user';
+
+    public $anonymousMessage = 'Cannot set owner unless they are authenticated';
 }
