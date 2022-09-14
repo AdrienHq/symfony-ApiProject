@@ -94,9 +94,8 @@ class Books
     private ?int $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'books')]
-    #[Groups(["book:read", "book:write"])]
     #[ORM\JoinColumn(nullable: false)]
-    #[Assert\Valid]
+    #[Groups(["book:read", "book:collection:post"])]
     private ?User $owner = null;
 
     public function __construct()

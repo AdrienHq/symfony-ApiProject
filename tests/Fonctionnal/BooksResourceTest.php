@@ -14,14 +14,33 @@ class BooksResourceTest extends CustomApiTestCase
         $client = self::createClient();
 
         $client->request('POST', 'api/books', [
-            'headers' => ['Content-Type' => 'application/json'],
             'json' => [],
         ]);
         $this->assertResponseStatusCodeSame(401);
 
-        $this->createUser('bookTest@example.com', "$2y$04$9L4b292zpiqse8QdHmTxceicQXoDERcUOnPcBfjMVqI2k30/mAT.e");
+        $authenticatedUser = $this->createUserAndLogIn($client, 'bookTest@example.com', "$2y$04$9L4b292zpiqse8QdHmTxceicQXoDERcUOnPcBfjMVqI2k30/mAT.e");
+        $otherUser = $this->createUser('newuser@example.com', 'foo');
 
-        $this->login($client, 'bookTest@example.com', 'book');
+        $client->request('POST', 'api/books', [
+            'json' => [],
+        ]);
+        $this->assertResponseStatusCodeSame(400);
+
+        $bookData = [
+            'title' => 'My test Title',
+            'description' => 'My description test',
+            'price' => 432
+        ];
+
+        $client->request('POST', 'api/books', [
+            'json' => $bookData + ['owner'=>'/api/users/'.$otherUser->getId()],
+        ]);
+        $this->assertResponseStatusCodeSame(400, 'Not passing the correct owner');
+
+        $client->request('POST', 'api/books', [
+            'json' => $bookData + ['owner'=>'/api/users/'.$authenticatedUser->getId()],
+        ]);
+        $this->assertResponseStatusCodeSame(201);
     }
 
     public function testUpdateBooks()
