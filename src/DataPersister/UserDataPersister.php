@@ -10,12 +10,12 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserDataPersister implements DataPersisterInterface
 {
-    private EntityManagerInterface $entityManager;
+    private $dataPersister;
     private UserPasswordHasherInterface $passwordHasher;
 
-    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher)
+    public function __construct(DataPersisterInterface $dataPersister, UserPasswordHasherInterface $passwordHasher)
     {
-        $this->entityManager = $entityManager;
+        $this->dataPersister = $dataPersister;
         $this->passwordHasher = $passwordHasher;
     }
 
@@ -33,13 +33,12 @@ class UserDataPersister implements DataPersisterInterface
             );
             $data->eraseCredentials();
         }
-        $this->entityManager->persist($data);
-        $this->entityManager->flush();
+
+        $this->dataPersister->persist();
     }
 
     public function remove($data)
     {
-        $this->entityManager->remove($data);
-        $this->entityManager->flush();
+        $this->dataPersister->persist($data);
     }
 }
