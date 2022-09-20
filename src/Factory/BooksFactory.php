@@ -28,22 +28,26 @@ use Zenstruck\Foundry\Proxy;
  */
 final class BooksFactory extends ModelFactory
 {
-    public function __construct()
+    public function published(): self
     {
-        parent::__construct();
+        return $this->addState(['isPublished' => true]);
+    }
 
-        // TODO inject services if required (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services)
+    public function withLongDescription(): self
+    {
+        return $this->addState([
+            'description' => self::faker()->paragraphs(3, true)
+        ]);
     }
 
     protected function getDefaults(): array
     {
         return [
             // TODO add your default values here (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories)
-            'title' => self::faker()->text(),
-            'numberOfPages' => self::faker()->randomNumber(),
+            'title' => 'Factory Title',
+            'numberOfPages' => 7437057,
             'dateOfRelease' => null, // TODO add DATETIME ORM type manually
-            'author' => self::faker()->text(),
-            'isPublished' => self::faker()->boolean(),
+            'author' => UserFactory::new(),
         ];
     }
 
