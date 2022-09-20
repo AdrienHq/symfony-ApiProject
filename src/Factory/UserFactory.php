@@ -28,21 +28,16 @@ use Zenstruck\Foundry\Proxy;
  */
 final class UserFactory extends ModelFactory
 {
-    public function __construct()
-    {
-        parent::__construct();
-
-        // TODO inject services if required (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services)
-    }
+    const DEFAULT_PASSWORD = 'test';
 
     protected function getDefaults(): array
     {
         return [
-            // TODO add your default values here (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories)
-            'email' => self::faker()->text(),
-            'roles' => [],
-            'password' => self::faker()->text(),
-            'username' => self::faker()->text(),
+            'email' => self::faker()->email,
+            'username' => self::faker()->userName,
+            // hashed version of "test"
+            // php bin/console security:encode-password --env=test
+            'password' => '$argon2id$v=19$m=10,t=3,p=1$eyXPWiQFWUO901E78Bb3UQ$hyu9dFDz7fo2opQyCSoX/NfJDvEpzER/a+WbiAagqqw',
         ];
     }
 
